@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Warang+Citi&display=swap" rel="stylesheet">
+    <title>Document</title>
+    <style>
+        #img img {
+            border-radius: 50%;
+            margin: 30px auto;
+            display: flex;
+        }
+
+        .toss {
+            border: none;
+            background-color: #EC1C24;
+            color: white;
+            padding: 10px 20px 10px 20px;
+            border-radius: 30px;
+            font-family: 'Noto Sans Warang Citi', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 50px;
+        }
+
+        .toss-button-container {
+            text-align: center;
+        }
+
+        .img-grid-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 2rem;
+            max-width: fit-content;
+            margin: auto;
+        }
+
+        .img-grid-row>div {
+            height: auto;
+            padding: 10px;
+        }
+
+        .img-grid-row>div>img {
+            width: 100px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        #selectedToss {
+            font-family: 'Noto Sans Warang Citi', sans-serif;
+            font-weight: bold;
+            font-size: 16px;
+            position: relative;
+            /* top: -90px; */
+        }
+
+        .select_toss {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="img-grid-row">
+        <div>
+            <img onclick="changeIt(this.src)" src="./Head.png" alt="">
+        </div>
+        <div>
+            <img onclick="changeIt(this.src)" src="./Tail.png" alt="">
+        </div>
+    </div>
+    <div class="select_toss">
+        <div id="img"></div>
+        <p id="selectedToss">Please Select The Toss first</p>
+    </div>
+    <div class="toss-button-container">
+        <div style="display: none;" id="button_hidden">
+            <button class="toss" onclick="display_random_image();">Toss The
+                Coin</button>
+        </div>
+    </div>
+
+    <div style="display: flex;margin: auto;justify-content: center;align-items: center;">
+        <video id="right_dance" style="display: none;" loop muted autoplay  width="320" height="320">
+            <source src="./ezgif.com-gif-maker (2).mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div style="display: flex;margin: auto;justify-content: center;align-items: center;">
+        <video id="wrong_dance" style="display: none;" loop muted autoplay  width="320" height="320">
+            <source src="./ezgif.com-gif-maker (1).mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <!-- <img src="./" alt=""> -->
+
+    <audio id="audio" src="./coin.mp3"></audio>
+    <audio id="click" src="./mixkit-fast-double-click-on-mouse-275.wav"></audio>
+    <audio id="wrong" loop src="./Wrong Sir Wrong.mp3"></audio>
+    <audio id="right" loop src="./You Right.mp3"></audio>
+
+    <div style="display: none;text-align: center;" id="Restart">
+        <button class="toss" onclick="window.location.reload();">Restart The Game</button>
+    </div>
+    <script>
+        let selectedTossText = document.getElementById('selectedToss')
+        let button = document.getElementById('button_hidden')
+        let restart = document.getElementById('Restart')
+        let imgsrcSelected;
+        let arr;
+
+
+        function changeIt(_src) {
+            var click = document.getElementById("click");
+            click.play();
+            imgsrcSelected = _src
+            if (imgsrcSelected === 'http://127.0.0.1:58533/Head.png') {
+                // alert('You Have Selected Head');
+                selectedTossText.innerHTML = "You Have Selected Head"
+            } else if (imgsrcSelected === 'http://127.0.0.1:58533/Tail.png') {
+                // alert('You Have Selected Tail')
+                selectedTossText.innerHTML = "You Have Selected Tail"
+            }
+
+            if (button.style.display === 'none') {
+                button.style.display = 'block'
+            }
+            // alert(imgsrcSelected)
+        }
+
+        function display_random_image() {
+            var theImages = [{
+                src: "./Head.png",
+                width: "100",
+                height: "100"
+            }, {
+                src: "Tail.png",
+                width: "100",
+                height: "100"
+            }];
+
+            var preBuffer = [];
+            for (var i = 0, j = theImages.length; i < j; i++) {
+                preBuffer[i] = new Image();
+                preBuffer[i].src = theImages[i].src;
+                preBuffer[i].width = theImages[i].width;
+                preBuffer[i].height = theImages[i].height;
+            }
+
+            // create random image number
+            function getRandomInt(min, max) {
+                imn = Math.floor(Math.random() * (max - min + 1)) + min;
+                return preBuffer[imn];
+            }
+
+            // 0 is first image,   preBuffer.length - 1) is  last image
+
+            var newImage = getRandomInt(0, preBuffer.length - 1);
+
+            // remove the previous images
+            var images = document.getElementsByTagName('img');
+            var l = images.length;
+            for (var p = 0; p < l; p++) {
+                images[0].parentNode.removeChild(images[0]);
+            }
+
+            var audio = document.getElementById("audio");
+            audio.play();
+
+            var imgDiv = document.getElementById('img').appendChild(newImage)
+            var wrong = document.getElementById("wrong");
+            var right = document.getElementById("right");
+            var dance = document.getElementById('right_dance');
+            var wrong_dance = document.getElementById('wrong_dance')
+            // console.log(newImage.src)
+            if (imgsrcSelected === newImage.src) {
+                button.style.display = 'none'
+                right.play();
+                selectedTossText.innerHTML = "It's Match"
+                restart.style.display = 'block'
+                dance.style.display = 'block';
+                wrong_dance.style.display = 'none'
+            } else {
+                button.style.display = 'none'
+                // alert(false)
+                wrong.play()
+                selectedTossText.innerHTML = "Not Match"
+                restart.style.display = 'block'
+                dance.style.display = 'none';
+                wrong_dance.style.display = 'block'
+            }
+        }
+    </script>
+</body>
+
+</html>
